@@ -1,3 +1,25 @@
+# Claude Desktop Buddy — M5StickC Plus 2 Port
+
+Fork of [anthropics/claude-desktop-buddy](https://github.com/anthropics/claude-desktop-buddy) 
+ported to the **M5StickC Plus 2**.
+
+## Changes from original
+- Library changed from `M5StickCPlus` to `M5StickCPlus2`
+- Updated graphics API: `TFT_eSPI` → `lgfx::LovyanGFX`
+- Updated power API: `M5.Axp` → `M5.Power`
+- Updated RTC API to M5Unified style
+- Patched DFRobot_GP8XXX for newer ESP32 Arduino framework
+
+## Flash instructions
+See original repo README, use `--upload-port COMX` for your port.
+
+
+
+
+
+Original README.md below
+
+-----------------------
 # claude-desktop-buddy
 
 Claude for macOS and Windows can connect Claude Cowork and Claude Code to
