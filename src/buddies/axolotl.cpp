@@ -1,16 +1,16 @@
 #include "../buddy.h"
 #include "../buddy_common.h"
-#include <M5StickCPlus.h>
+#include <M5StickCPlus2.h>
 #include <string.h>
 
-extern TFT_eSprite spr;
+extern LGFX_Sprite spr;
 
 namespace axolotl {
 
 // Base silhouette: }~ ... ~{ are the feathery gills, ( .--. ) is the smile,
 // (_/  \_) are the little feet. Always smiling, always bubbling.
 
-// ─── SLEEP ───  ~12s cycle, 6 poses + bubble stream
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ SLEEP Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~12s cycle, 6 poses + bubble stream
 static void doSleep(uint32_t t) {
   static const char* const FLOAT[5]   = { "            ", "}~(______)~{", "}~( -  - )~{", "  ( .__. )  ", "  (_/  \\_)  " };
   static const char* const BREATHE[5] = { "            ", "}~(______)~{", "}~( _  _ )~{", "  ( .__. )  ", "  (_/  \\_)  " };
@@ -45,7 +45,7 @@ static void doSleep(uint32_t t) {
   buddyPrint("z");
 }
 
-// ─── IDLE ───  ~14s cycle, 10 poses + lazy bubbles
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ IDLE Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~14s cycle, 10 poses + lazy bubbles
 static void doIdle(uint32_t t) {
   static const char* const REST[5]    = { "            ", "}~(______)~{", "}~( o  o )~{", "  ( .--. )  ", "  (_/  \\_)  " };
   static const char* const LOOK_L[5]  = { "            ", "}~(______)~{", "}~(o   o )~{", "  ( .--. )  ", "  (_/  \\_)  " };
@@ -77,7 +77,7 @@ static void doIdle(uint32_t t) {
   buddyPrint(p & 1 ? "o" : "O");
 }
 
-// ─── BUSY ───  ~10s cycle, 6 poses + dot ticker
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ BUSY Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~10s cycle, 6 poses + dot ticker
 static void doBusy(uint32_t t) {
   static const char* const TYPE_A[5]  = { "            ", "}~(______)~{", "}~( v  v )~{", "  (  --  )  ", " /(_/  \\_)\\ " };
   static const char* const TYPE_B[5]  = { "            ", "}~(______)~{", "}~( v  v )~{", "  (  __  )  ", " \\(_/  \\_)/ " };
@@ -105,7 +105,7 @@ static void doBusy(uint32_t t) {
   buddyPrint("o");
 }
 
-// ─── ATTENTION ───  ~8s cycle, 6 poses + ! pulse
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ ATTENTION Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~8s cycle, 6 poses + ! pulse
 static void doAttention(uint32_t t) {
   static const char* const ALERT[5]   = { "    ^  ^    ", "}}~(______)~{{", "}}~( O  O )~{{", "  (  O   )  ", "  (_/  \\_)  " };
   static const char* const SCAN_L[5]  = { "    ^  ^    ", "}}~(______)~{{", "}}~(O    O)~{{", "  (  O   )  ", "  (_/  \\_)  " };
@@ -135,7 +135,7 @@ static void doAttention(uint32_t t) {
   }
 }
 
-// ─── CELEBRATE ───  ~5.6s cycle, 6 poses + confetti rain
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ CELEBRATE Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~5.6s cycle, 6 poses + confetti rain
 static void doCelebrate(uint32_t t) {
   static const char* const CROUCH[5]  = { "            ", "}~(______)~{", "}~( ^  ^ )~{", "  (  ww  )  ", " /(_/  \\_)\\ " };
   static const char* const JUMP[5]    = { "  \\(    )/  ", "}~(______)~{", "}~( ^  ^ )~{", "  (  ww  )  ", "  (_/  \\_)  " };
@@ -162,7 +162,7 @@ static void doCelebrate(uint32_t t) {
   }
 }
 
-// ─── DIZZY ───  ~6s cycle, 5 poses + orbiting stars
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ DIZZY Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~6s cycle, 5 poses + orbiting stars
 static void doDizzy(uint32_t t) {
   static const char* const TILT_L[5]  = { "            ", "}~(______)~{ ", "}~( @  @ )~{ ", "  ( ~~~~ )  ", "  (_/  \\_)  " };
   static const char* const TILT_R[5]  = { "            ", " }~(______)~{", " }~( @  @ )~{", "  ( ~~~~ )  ", "  (_/  \\_)  " };
@@ -192,7 +192,7 @@ static void doDizzy(uint32_t t) {
   buddyPrint("o");
 }
 
-// ─── HEART ───  ~10s cycle, 6 poses + rising heart stream
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ HEART Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~10s cycle, 6 poses + rising heart stream
 static void doHeart(uint32_t t) {
   static const char* const DREAMY[5]  = { "            ", "}~(______)~{", "}~( ^  ^ )~{", "  ( .vv. )  ", "  (_/  \\_)  " };
   static const char* const BLUSH[5]   = { "            ", "}~(______)~{", "}~(#^  ^#)~{", "  ( .vv. )  ", "  (_/  \\_)  " };

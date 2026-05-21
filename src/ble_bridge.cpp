@@ -7,7 +7,7 @@
 #include <Arduino.h>
 #include <string.h>
 
-// Nordic UART Service UUIDs — every BLE serial example uses these, so
+// Nordic UART Service UUIDs Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ every BLE serial example uses these, so
 // existing tools (nRF Connect, bluefy, Web Bluetooth examples) can talk to
 // us without custom UUIDs.
 #define NUS_SERVICE_UUID "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
@@ -33,7 +33,7 @@ static volatile uint16_t  mtu = 23;
 static void rxPush(const uint8_t* p, size_t n) {
   for (size_t i = 0; i < n; i++) {
     size_t next = (rxHead + 1) % RX_CAP;
-    if (next == rxTail) return;  // full — drop (upstream should keep up)
+    if (next == rxTail) return;  // full Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ drop (upstream should keep up)
     rxBuf[rxHead] = p[i];
     rxHead = next;
   }

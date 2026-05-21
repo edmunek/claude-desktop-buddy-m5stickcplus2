@@ -1,13 +1,13 @@
 #include "../buddy.h"
 #include "../buddy_common.h"
-#include <M5StickCPlus.h>
+#include <M5StickCPlus2.h>
 #include <string.h>
 
-extern TFT_eSprite spr;
+extern LGFX_Sprite spr;
 
 namespace dragon {
 
-// ─── SLEEP ───  ~12s cycle, 6 poses
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ SLEEP Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~12s cycle, 6 poses
 static void doSleep(uint32_t t) {
   static const char* const CURL[5]    = { "            ", "            ", "   _____    ", "  (--   )~  ", "  `vvvvv'   " };
   static const char* const BREATH[5]  = { "            ", "            ", "   _____    ", "  (--   )~~ ", "  `vvvvv'   " };
@@ -44,7 +44,7 @@ static void doSleep(uint32_t t) {
   buddyPrint("o");
 }
 
-// ─── IDLE ───  ~14s cycle, 10 poses
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ IDLE Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~14s cycle, 10 poses
 static void doIdle(uint32_t t) {
   static const char* const PROUD[5]   = { "            ", "  /^\\  /^\\  ", " <  o    o >", " (   ww   ) ", "  `-vvvv-'  " };
   static const char* const LOOK_L[5]  = { "            ", "  /^\\  /^\\  ", " <o     o  >", " (   ww   ) ", "  `-vvvv-'  " };
@@ -80,7 +80,7 @@ static void doIdle(uint32_t t) {
   }
 }
 
-// ─── BUSY ───  ~10s cycle, 6 poses + gold-coin ticker
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ BUSY Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~10s cycle, 6 poses + gold-coin ticker
 static void doBusy(uint32_t t) {
   static const char* const COUNT_A[5] = { "    $$$$    ", "  /^\\  /^\\  ", " <  v    v >", " (   --   ) ", " /`-vvvv-'\\ " };
   static const char* const COUNT_B[5] = { "    $$$$    ", "  /^\\  /^\\  ", " <  v    v >", " (   __   ) ", " \\`-vvvv-'/ " };
@@ -96,7 +96,7 @@ static void doBusy(uint32_t t) {
   uint8_t beat = (t / 5) % sizeof(SEQ);
   buddyPrintSprite(P[SEQ[beat]], 5, 0, 0xF800);
 
-  // Gold coins clinking — '$' and '.' alternate
+  // Gold coins clinking Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ '$' and '.' alternate
   static const char* const COINS[] = { "$  ", "$$ ", "$$$", " $$", "  $", "   " };
   buddySetColor(BUDDY_YEL);
   buddySetCursor(BUDDY_X_CENTER + 22, BUDDY_Y_OVERLAY + 14);
@@ -109,7 +109,7 @@ static void doBusy(uint32_t t) {
   }
 }
 
-// ─── ATTENTION ───  ~8s cycle, 6 poses + ! pulse
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ ATTENTION Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~8s cycle, 6 poses + ! pulse
 static void doAttention(uint32_t t) {
   static const char* const ROAR[5]    = { "    ^  ^    ", " /^^\\  /^^\\ ", "<  O    O  >", " (   <>   ) ", "  `-vvvv-'  " };
   static const char* const SCAN_L[5]  = { "    ^  ^    ", " /^^\\  /^^\\ ", "< O      O >", " (   O    ) ", "  `-vvvv-'  " };
@@ -146,7 +146,7 @@ static void doAttention(uint32_t t) {
   }
 }
 
-// ─── CELEBRATE ───  ~5.6s cycle, 6 poses + multicolor confetti
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ CELEBRATE Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~5.6s cycle, 6 poses + multicolor confetti
 static void doCelebrate(uint32_t t) {
   static const char* const CROUCH[5]  = { "            ", "  /^\\  /^\\  ", " <  ^    ^ >", " (   WW   ) ", " /`-vvvv-'\\ " };
   static const char* const JUMP[5]    = { "  \\(    )/  ", "   /^\\/^\\   ", " <  ^    ^ >", " (   WW   ) ", "  `-vvvv-'  " };
@@ -174,7 +174,7 @@ static void doCelebrate(uint32_t t) {
   }
 }
 
-// ─── DIZZY ───  ~5.6s cycle, 5 poses + orbiting stars
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ DIZZY Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~5.6s cycle, 5 poses + orbiting stars
 static void doDizzy(uint32_t t) {
   static const char* const TILT_L[5]  = { "            ", " /^\\  /^\\   ", "< @    @ )  ", " (   ~~   ) ", "  `-vvvv-'  " };
   static const char* const TILT_R[5]  = { "            ", "   /^\\  /^\\ ", "  ( @    @ >", " (   ~~   ) ", "  `-vvvv-'  " };
@@ -206,7 +206,7 @@ static void doDizzy(uint32_t t) {
   buddyPrint("$");
 }
 
-// ─── HEART ───  ~10s cycle, 5 poses + rising heart stream
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ HEART Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~10s cycle, 5 poses + rising heart stream
 static void doHeart(uint32_t t) {
   static const char* const DREAMY[5]  = { "            ", "  /^\\  /^\\  ", " <  ^    ^ >", " (   ww   ) ", "  `-vvvv-'  " };
   static const char* const BLUSH[5]   = { "            ", "  /^\\  /^\\  ", " <#^    ^# >", " (   ww   ) ", "  `-vvvv-'  " };

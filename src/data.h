@@ -15,7 +15,7 @@ struct TamaState {
   bool     connected;
   char     lines[8][92];
   uint8_t  nLines;
-  uint16_t lineGen;          // bumps when lines change — lets UI reset scroll
+  uint16_t lineGen;          // bumps when lines change Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ lets UI reset scroll
   char     promptId[40];     // pending permission request ID; empty = no prompt
   char     promptTool[20];
   char     promptHint[44];
@@ -23,9 +23,9 @@ struct TamaState {
 
 // ---------------------------------------------------------------------------
 // Three modes, checked in priority order:
-//   demo   → auto-cycle fake scenarios every 8s, ignore live data
-//   live   → JSON arrived in the last 10s over USB or BT
-//   asleep → no data, all zeros, "No Claude connected"
+//   demo   Ä‚ËĂ˘â‚¬Â Ă˘â‚¬â„˘ auto-cycle fake scenarios every 8s, ignore live data
+//   live   Ä‚ËĂ˘â‚¬Â Ă˘â‚¬â„˘ JSON arrived in the last 10s over USB or BT
+//   asleep Ä‚ËĂ˘â‚¬Â Ă˘â‚¬â„˘ no data, all zeros, "No Claude connected"
 // ---------------------------------------------------------------------------
 
 static uint32_t _lastLiveMs = 0;
@@ -62,7 +62,7 @@ inline const char* dataScenarioName() {
   return "none";
 }
 
-// Set true once the bridge sends a time sync — until then the RTC may
+// Set true once the bridge sends a time sync Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ until then the RTC may
 // hold whatever was on the coin cell (or 2000-01-01 if it lost power).
 static bool _rtcValid = false;
 inline bool dataRtcValid() { return _rtcValid; }
@@ -78,11 +78,11 @@ static void _applyJson(const char* line, TamaState* out) {
   if (!t.isNull() && t.size() == 2) {
     time_t local = (time_t)t[0].as<uint32_t>() + (int32_t)t[1];
     struct tm lt; gmtime_r(&local, &lt);
-    RTC_TimeTypeDef tm = { (uint8_t)lt.tm_hour, (uint8_t)lt.tm_min, (uint8_t)lt.tm_sec };
-    RTC_DateTypeDef dt = { (uint8_t)lt.tm_wday, (uint8_t)(lt.tm_mon + 1),
+    m5::rtc_time_t tm = { (uint8_t)lt.tm_hour, (uint8_t)lt.tm_min, (uint8_t)lt.tm_sec };
+    m5::rtc_date_t dt = { (uint8_t)lt.tm_wday, (uint8_t)(lt.tm_mon + 1),
                            (uint8_t)lt.tm_mday, (uint16_t)(lt.tm_year + 1900) };
-    M5.Rtc.SetTime(&tm);
-    M5.Rtc.SetDate(&dt);
+    M5.Rtc.setTime(&tm);
+    M5.Rtc.setDate(&dt);
     extern uint32_t _clkLastRead;
     _clkLastRead = 0;   // force re-read so _clkDt and _rtcValid agree
     _rtcValid = true;

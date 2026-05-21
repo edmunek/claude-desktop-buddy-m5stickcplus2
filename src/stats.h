@@ -7,7 +7,7 @@
 
 // Persistent stats backed by NVS. Load once at boot; save sparingly
 // (NVS sectors have ~100K write cycles). We save on significant events
-// only — approval, denial, nap end — never on a timer.
+// only Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ approval, denial, nap end Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ never on a timer.
 
 static const uint32_t TOKENS_PER_LEVEL = 50000;
 
@@ -71,15 +71,15 @@ inline void statsOnApproval(uint32_t secondsToRespond) {
 
 // Tokens feed the pet. 50K per level, 5K per pip on the fed bar.
 // Bridge sends cumulative since its start; we add the delta. A drop means
-// the bridge restarted — resync without adding, don't lose NVS progress.
+// the bridge restarted Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ resync without adding, don't lose NVS progress.
 static uint32_t _lastBridgeTokens = 0;
-static bool _tokensSynced = false;       // first-sight latch — see below
+static bool _tokensSynced = false;       // first-sight latch Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ see below
 static bool _levelUpPending = false;
 
 inline void statsOnBridgeTokens(uint32_t bridgeTotal) {
   // The bridge sends its cumulative total since IT started. We track deltas.
-  // Bridge restart → number drops → resync. But on DEVICE reboot,
-  // _lastBridgeTokens is back to 0 while the bridge's total isn't — first
+  // Bridge restart Ä‚ËĂ˘â‚¬Â Ă˘â‚¬â„˘ number drops Ä‚ËĂ˘â‚¬Â Ă˘â‚¬â„˘ resync. But on DEVICE reboot,
+  // _lastBridgeTokens is back to 0 while the bridge's total isn't Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ first
   // packet would re-credit the entire session. Latch on first sight instead.
   if (!_tokensSynced) {
     _lastBridgeTokens = bridgeTotal;
@@ -98,7 +98,7 @@ inline void statsOnBridgeTokens(uint32_t bridgeTotal) {
   _stats.tokens += delta;
   uint8_t lvlAfter = (uint8_t)(_stats.tokens / TOKENS_PER_LEVEL);
 
-  // Heartbeats are timer-driven telemetry — don't wear NVS on every delta.
+  // Heartbeats are timer-driven telemetry Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ don't wear NVS on every delta.
   // Tokens accumulate in RAM, persist only on the milestone. Worst case on
   // hard power-off: lose up to 50K tokens of progress.
   if (lvlAfter > lvlBefore) {
@@ -129,7 +129,7 @@ inline uint16_t statsMedianVelocity() {
   uint16_t tmp[8];
   memcpy(tmp, _stats.velocity, sizeof(tmp));
   uint8_t n = _stats.velCount;
-  // insertion sort, n ≤ 8
+  // insertion sort, n Ä‚ËĂ˘â‚¬Â°Ă‚Â¤ 8
   for (uint8_t i = 1; i < n; i++) {
     uint16_t k = tmp[i]; int8_t j = i - 1;
     while (j >= 0 && tmp[j] > k) { tmp[j+1] = tmp[j]; j--; }
@@ -179,7 +179,7 @@ inline uint8_t statsFedProgress() {
 struct Settings {
   bool sound;
   bool bt;
-  bool wifi;     // placeholder — no WiFi stack linked yet, just stores the pref
+  bool wifi;     // placeholder Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ no WiFi stack linked yet, just stores the pref
   bool led;
   bool hud;
   uint8_t clockRot;  // 0=auto 1=portrait 2=landscape
@@ -220,7 +220,7 @@ inline void petNameLoad() {
   _prefs.end();
 }
 
-// Strip JSON-breaking chars — these names go into a printf'd JSON string
+// Strip JSON-breaking chars Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ these names go into a printf'd JSON string
 // unescaped (xfer.h status response). A quote persists to NVS and breaks
 // the status endpoint until the name is re-set.
 static void _safeCopy(char* dst, size_t dstLen, const char* src) {

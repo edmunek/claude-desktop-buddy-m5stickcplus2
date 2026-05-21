@@ -1,4 +1,6 @@
 #pragma once
+
+#include <M5StickCPlus2.h>
 #include <stdint.h>
 
 // Multi-species ASCII buddy renderer. Each species lives in its own
@@ -8,8 +10,8 @@
 void buddyInit();
 void buddyTick(uint8_t personaState);
 void buddyInvalidate();
-class TFT_eSPI;
-void buddyRenderTo(TFT_eSPI* tgt, uint8_t personaState);
+
+void buddyRenderTo(lgfx::LovyanGFX* tgt, uint8_t personaState);
 void buddySetSpecies(const char* name);
 void buddySetSpeciesIdx(uint8_t idx);
 void buddyNextSpecies();
@@ -27,3 +29,4 @@ struct Species {
   uint16_t bodyColor;
   StateFn states[7];   // index by PersonaState (0=sleep .. 6=heart)
 };
+

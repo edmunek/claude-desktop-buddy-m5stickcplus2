@@ -1,4 +1,6 @@
 #pragma once
+
+#include <M5StickCPlus2.h>
 #include <stdint.h>
 
 struct Palette {
@@ -18,13 +20,14 @@ void characterSetState(uint8_t state);
 // sprite. Call every loop iteration. Does nothing if not loaded.
 void characterTick();
 void characterInvalidate();
-void characterClose();   // close GIF + clear loaded flag; FS stays mounted   // full clear + reopen current — call when an overlay closes
+void characterClose();   // close GIF + clear loaded flag; FS stays mounted   // full clear + reopen current Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ call when an overlay closes
 
 // Peek mode renders the GIF at half scale, centered in the info-panel
 // header strip; off renders full-size centered in the upper home area.
-// Adaptive to actual canvas height — no padding required in source art.
+// Adaptive to actual canvas height Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ no padding required in source art.
 void characterSetPeek(bool peek);
-class TFT_eSPI;
-void characterRenderTo(TFT_eSPI* tgt, int cx, int cy);
+
+void characterRenderTo(lgfx::LovyanGFX* tgt, int cx, int cy);
 
 const Palette& characterPalette();
+

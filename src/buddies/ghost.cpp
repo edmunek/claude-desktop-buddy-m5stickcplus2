@@ -1,13 +1,13 @@
 #include "../buddy.h"
 #include "../buddy_common.h"
-#include <M5StickCPlus.h>
+#include <M5StickCPlus2.h>
 #include <string.h>
 
-extern TFT_eSprite spr;
+extern LGFX_Sprite spr;
 
 namespace ghost {
 
-// ─── SLEEP ───  ~12s cycle, drifting + fading
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ SLEEP Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~12s cycle, drifting + fading
 static void doSleep(uint32_t t) {
   static const char* const DRIFT_A[5] = { "            ", "   .----.   ", "  ( -    - )", "  |        |", "  ~`~``~`~  " };
   static const char* const DRIFT_B[5] = { "            ", "   .----.   ", "  ( -    - )", "  |        |", "  `~`~~`~`  " };
@@ -45,7 +45,7 @@ static void doSleep(uint32_t t) {
   buddyPrint("z");
 }
 
-// ─── IDLE ───  ~14s cycle, 10 micro-poses
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ IDLE Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~14s cycle, 10 micro-poses
 static void doIdle(uint32_t t) {
   static const char* const HOVER[5]   = { "            ", "   .----.   ", "  ( o    o )", "  |   __   |", "  ~`~``~`~  " };
   static const char* const LOOK_L[5]  = { "            ", "   .----.   ", "  (o    o  )", "  |   __   |", "  ~`~``~`~  " };
@@ -79,7 +79,7 @@ static void doIdle(uint32_t t) {
   buddyPrintSprite(P[SEQ[beat]], 5, Y_BOB[beat], 0xFFFF);
 }
 
-// ─── BUSY ───  ~10s cycle, 6 poses + boo ticker
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ BUSY Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~10s cycle, 6 poses + boo ticker
 static void doBusy(uint32_t t) {
   static const char* const WORK_A[5]  = { "            ", "   .----.   ", "  ( v    v )", "  |   --   |", " /~`~``~`~\\ " };
   static const char* const WORK_B[5]  = { "            ", "   .----.   ", "  ( v    v )", "  |   __   |", " \\~`~``~`~/ " };
@@ -101,7 +101,7 @@ static void doBusy(uint32_t t) {
   buddyPrint(DOTS[t % 6]);
 }
 
-// ─── ATTENTION ───  ~8s cycle, 6 poses + BOO! pulse
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ ATTENTION Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~8s cycle, 6 poses + BOO! pulse
 static void doAttention(uint32_t t) {
   static const char* const SPOOK[5]   = { "    ! !!    ", "   .----.   ", "  ( O    O )", "  |   OO   |", " /~`~``~`~\\ " };
   static const char* const SCAN_L[5]  = { "    ! !!    ", "   .----.   ", "  (O      O)", "  |   O    |", "  ~`~``~`~  " };
@@ -131,7 +131,7 @@ static void doAttention(uint32_t t) {
   }
 }
 
-// ─── CELEBRATE ───  ~5.6s cycle, 6 poses + confetti rain
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ CELEBRATE Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~5.6s cycle, 6 poses + confetti rain
 static void doCelebrate(uint32_t t) {
   static const char* const CROUCH[5]  = { "            ", "   .----.   ", "  ( ^    ^ )", "  |   ww   |", " /~`~``~`~\\ " };
   static const char* const JUMP[5]    = { "  \\(    )/  ", "   .----.   ", "  ( ^    ^ )", "  |   ww   |", "  ~`~``~`~  " };
@@ -158,7 +158,7 @@ static void doCelebrate(uint32_t t) {
   }
 }
 
-// ─── DIZZY ───  ~5.6s cycle, 5 poses + orbiting stars
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ DIZZY Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~5.6s cycle, 5 poses + orbiting stars
 static void doDizzy(uint32_t t) {
   static const char* const TILT_L[5]  = { "            ", "  .----.    ", " ( @    @ ) ", " |   ~~   | ", "  ~`~``~`~  " };
   static const char* const TILT_R[5]  = { "            ", "    .----.  ", "  ( @    @ )", "   |   ~~   |", "  ~`~``~`~  " };
@@ -184,7 +184,7 @@ static void doDizzy(uint32_t t) {
   buddyPrint("*");
 }
 
-// ─── HEART ───  ~10s cycle, 5 poses + rising heart stream
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ HEART Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~10s cycle, 5 poses + rising heart stream
 static void doHeart(uint32_t t) {
   static const char* const DREAMY[5]  = { "            ", "   .----.   ", "  ( ^    ^ )", "  |   ww   |", "  ~`~``~`~  " };
   static const char* const BLUSH[5]   = { "            ", "   .----.   ", "  (#^    ^#)", "  |   ww   |", "  ~`~``~`~  " };

@@ -1,13 +1,13 @@
 #include "../buddy.h"
 #include "../buddy_common.h"
-#include <M5StickCPlus.h>
+#include <M5StickCPlus2.h>
 #include <string.h>
 
-extern TFT_eSprite spr;
+extern LGFX_Sprite spr;
 
 namespace cat {
 
-// ─── SLEEP ───  ~12s cycle, 6 poses (curled loaf, breathing, twitching tail)
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ SLEEP Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~12s cycle, 6 poses (curled loaf, breathing, twitching tail)
 static void doSleep(uint32_t t) {
   static const char* const LOAF[5]     = { "            ", "            ", "   .-..-.   ", "  ( -.- )   ", "  `------`~ " };
   static const char* const BREATHE[5]  = { "            ", "            ", "   .-..-.   ", "  ( -.- )_  ", " `~------'~ " };
@@ -43,7 +43,7 @@ static void doSleep(uint32_t t) {
   buddyPrint("z");
 }
 
-// ─── IDLE ───  ~16s cycle, 10 poses (sassy micro-actions)
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ IDLE Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~16s cycle, 10 poses (sassy micro-actions)
 static void doIdle(uint32_t t) {
   static const char* const REST[5]    = { "            ", "   /\\_/\\    ", "  ( o   o ) ", "  (  w   )  ", "  (\")_(\")   " };
   static const char* const LOOK_L[5]  = { "            ", "   /\\_/\\    ", "  (o    o ) ", "  (  w   )  ", "  (\")_(\")   " };
@@ -71,7 +71,7 @@ static void doIdle(uint32_t t) {
   buddyPrintSprite(P[SEQ[beat]], 5, 0, 0xC2A6);
 }
 
-// ─── BUSY ───  ~10s cycle, 6 poses + dot ticker (knocking-things-off-table energy)
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ BUSY Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~10s cycle, 6 poses + dot ticker (knocking-things-off-table energy)
 static void doBusy(uint32_t t) {
   static const char* const PAW_UP[5]  = { "      .     ", "   /\\_/\\    ", "  ( o   o ) ", "  (  w   )/ ", "  (\")_(\")   " };
   static const char* const PAW_TAP[5] = { "    .       ", "   /\\_/\\    ", "  ( o   o ) ", "  (  w   )_ ", "  (\")_(\")   " };
@@ -93,7 +93,7 @@ static void doBusy(uint32_t t) {
   buddyPrint(DOTS[t % 6]);
 }
 
-// ─── ATTENTION ───  ~8s cycle, 6 poses + ! pulse (ears up, dilated pupils)
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ ATTENTION Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~8s cycle, 6 poses + ! pulse (ears up, dilated pupils)
 static void doAttention(uint32_t t) {
   static const char* const ALERT[5]   = { "            ", "   /^_^\\    ", "  ( O   O ) ", "  (  v   )  ", "  (\")_(\")   " };
   static const char* const SCAN_L[5]  = { "            ", "   /^_^\\    ", "  (O    O ) ", "  (  v   )  ", "  (\")_(\")   " };
@@ -123,7 +123,7 @@ static void doAttention(uint32_t t) {
   }
 }
 
-// ─── CELEBRATE ───  ~5s cycle, 6 poses + confetti rain (zoomies)
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ CELEBRATE Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~5s cycle, 6 poses + confetti rain (zoomies)
 static void doCelebrate(uint32_t t) {
   static const char* const CROUCH[5]  = { "            ", "   /\\_/\\    ", "  ( ^   ^ ) ", "  (  W   )  ", " /(\")_(\")\\  " };
   static const char* const JUMP[5]    = { "  \\^   ^/   ", "    /\\_/\\   ", "  ( ^   ^ ) ", "  (  W   )  ", "  (\")_(\")   " };
@@ -150,7 +150,7 @@ static void doCelebrate(uint32_t t) {
   }
 }
 
-// ─── DIZZY ───  ~6s cycle, 5 poses + orbiting stars (chasing own tail)
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ DIZZY Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~6s cycle, 5 poses + orbiting stars (chasing own tail)
 static void doDizzy(uint32_t t) {
   static const char* const TILT_L[5]  = { "            ", "  /\\_/\\     ", " ( @   @ )  ", " (   ~~  )  ", " (\")_(\")    " };
   static const char* const TILT_R[5]  = { "            ", "    /\\_/\\   ", "  ( @   @ ) ", "  (  ~~  )  ", "    (\")_(\") " };
@@ -176,7 +176,7 @@ static void doDizzy(uint32_t t) {
   buddyPrint("*");
 }
 
-// ─── HEART ───  ~10s cycle, 5 poses + rising hearts (smitten purr-monster)
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ HEART Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~10s cycle, 5 poses + rising hearts (smitten purr-monster)
 static void doHeart(uint32_t t) {
   static const char* const DREAMY[5]  = { "            ", "   /\\_/\\    ", "  ( ^   ^ ) ", "  (  u   )  ", "  (\")_(\")~  " };
   static const char* const BLUSH[5]   = { "            ", "   /\\_/\\    ", "  (#^   ^#) ", "  (  u   )  ", "  (\")_(\")   " };

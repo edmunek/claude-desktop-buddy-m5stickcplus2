@@ -1,13 +1,13 @@
 #include "../buddy.h"
 #include "../buddy_common.h"
-#include <M5StickCPlus.h>
+#include <M5StickCPlus2.h>
 #include <string.h>
 
-extern TFT_eSprite spr;
+extern LGFX_Sprite spr;
 
 namespace penguin {
 
-// ─── SLEEP ───  ~12s cycle, 6 poses, curled on ice
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ SLEEP Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~12s cycle, 6 poses, curled on ice
 static void doSleep(uint32_t t) {
   static const char* const TUCK[5]    = { "            ", "   .---.    ", "  ( -- )    ", "  (_____)   ", "   ~~~~~    " };
   static const char* const BREATHE[5] = { "            ", "   .---.    ", "  ( -- )    ", "  (_____)   ", "   =====    " };
@@ -42,7 +42,7 @@ static void doSleep(uint32_t t) {
   buddyPrint("z");
 }
 
-// ─── IDLE ───  ~14s cycle, 10 poses of waddling, formal posture
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ IDLE Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~14s cycle, 10 poses of waddling, formal posture
 static void doIdle(uint32_t t) {
   static const char* const STAND[5]   = { "   .---.    ", "  ( o>o )   ", " /(     )\\  ", "  `-----`   ", "   J   L    " };
   static const char* const WAD_L[5]   = { "   .---.    ", "  ( o>o )   ", "/(     )    ", "  `-----`   ", "  J    L    " };
@@ -69,7 +69,7 @@ static void doIdle(uint32_t t) {
   buddyPrintSprite(P[SEQ[beat]], 5, 0, 0x041F);
 }
 
-// ─── BUSY ───  ~10s cycle, 6 poses + dot ticker, formal flipper-typing
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ BUSY Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~10s cycle, 6 poses + dot ticker, formal flipper-typing
 static void doBusy(uint32_t t) {
   static const char* const TYPE_A[5]  = { "   .---.    ", "  ( v>v )   ", " /(     )\\  ", " /`-----`\\  ", "   J   L    " };
   static const char* const TYPE_B[5]  = { "   .---.    ", "  ( v>v )   ", " \\(     )/  ", " \\`-----`/  ", "   J   L    " };
@@ -91,7 +91,7 @@ static void doBusy(uint32_t t) {
   buddyPrint(DOTS[t % 6]);
 }
 
-// ─── ATTENTION ───  ~8s cycle, 6 poses + ! pulse, alert flippers up
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ ATTENTION Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~8s cycle, 6 poses + ! pulse, alert flippers up
 static void doAttention(uint32_t t) {
   static const char* const ALERT[5]   = { "   .---.    ", "  ( O>O )   ", " /(     )\\  ", "  `-----`   ", "   J   L    " };
   static const char* const SCAN_L[5]  = { "   .---.    ", "  (O> O )   ", " /(     )\\  ", "  `-----`   ", "   J   L    " };
@@ -121,7 +121,7 @@ static void doAttention(uint32_t t) {
   }
 }
 
-// ─── CELEBRATE ───  ~5.6s cycle, 6 poses + confetti rain, jumping penguin
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ CELEBRATE Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~5.6s cycle, 6 poses + confetti rain, jumping penguin
 static void doCelebrate(uint32_t t) {
   static const char* const CROUCH[5]  = { "            ", "   .---.    ", "  ( ^>^ )   ", " /(_____)\\  ", "   J   L    " };
   static const char* const JUMP[5]    = { "  \\.---./   ", "  ( ^>^ )   ", " /(     )\\  ", "  `-----`   ", "   ^   ^    " };
@@ -148,7 +148,7 @@ static void doCelebrate(uint32_t t) {
   }
 }
 
-// ─── DIZZY ───  ~5.6s cycle, 5 poses + orbiting stars, slipping on ice
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ DIZZY Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~5.6s cycle, 5 poses + orbiting stars, slipping on ice
 static void doDizzy(uint32_t t) {
   static const char* const SLIP_L[5]  = { "  .---.     ", " ( @>@ )    ", "/(     )    ", " `-----`    ", "  J   L     " };
   static const char* const SLIP_R[5]  = { "    .---.   ", "   ( @>@ )  ", "   (     )\\ ", "    `-----` ", "     J   L  " };
@@ -174,7 +174,7 @@ static void doDizzy(uint32_t t) {
   buddyPrint("*");
 }
 
-// ─── HEART ───  ~10s cycle, 5 poses + rising heart stream, dreamy penguin
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ HEART Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~10s cycle, 5 poses + rising heart stream, dreamy penguin
 static void doHeart(uint32_t t) {
   static const char* const DREAMY[5]  = { "   .---.    ", "  ( ^>^ )   ", " /(     )\\  ", "  `-----`   ", "   J   L    " };
   static const char* const BLUSH[5]   = { "   .---.    ", "  (#^>^#)   ", " /(     )\\  ", "  `-----`   ", "   J   L    " };

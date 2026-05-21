@@ -1,14 +1,14 @@
 #include "buddy.h"
 #include "buddy_common.h"
-#include <M5StickCPlus.h>
+#include <M5StickCPlus2.h>
 #include <string.h>
 
-extern TFT_eSprite spr;
+extern LGFX_Sprite spr;
 
 // Mirrors PersonaState in main.cpp
 enum { B_SLEEP, B_IDLE, B_BUSY, B_ATTENTION, B_CELEBRATE, B_DIZZY, B_HEART };
 
-// ──────────────── shared geometry ────────────────
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ shared geometry Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬
 const int BUDDY_X_CENTER = 67;
 const int BUDDY_CANVAS_W = 135;
 const int BUDDY_Y_BASE   = 30;
@@ -16,7 +16,7 @@ const int BUDDY_Y_OVERLAY = 6;
 const int BUDDY_CHAR_W   = 6;
 const int BUDDY_CHAR_H   = 8;
 
-// ──────────────── shared colors ────────────────
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ shared colors Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬
 const uint16_t BUDDY_BG     = 0x0000;
 const uint16_t BUDDY_HEART  = 0xF810;
 const uint16_t BUDDY_DIM    = 0x8410;
@@ -28,14 +28,14 @@ const uint16_t BUDDY_PURPLE = 0xA01F;
 const uint16_t BUDDY_RED    = 0xF800;
 const uint16_t BUDDY_BLUE   = 0x041F;
 
-// ──────────────── shared rendering helpers ────────────────
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ shared rendering helpers Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬
 // Render target indirection: defaults to the sprite, but can retarget to
 // M5.Lcd for landscape clock mode (both inherit TFT_eSPI). Coords stay
-// fixed — species hardcode BUDDY_X_CENTER/BUDDY_Y_OVERLAY in their
+// fixed Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ species hardcode BUDDY_X_CENTER/BUDDY_Y_OVERLAY in their
 // particle calls, so retargeting position would only move the body.
-static TFT_eSPI* _tgt = &spr;
-// 2× on home screen, 1× in peek (PET/INFO) and landscape clock. Species
-// art is space-padded to a fixed width for alignment at 1×; at 2× we trim
+static lgfx::LovyanGFX* _tgt = &spr;
+// 2Ă„â€šĂ˘â‚¬â€ť on home screen, 1Ă„â€šĂ˘â‚¬â€ť in peek (PET/INFO) and landscape clock. Species
+// art is space-padded to a fixed width for alignment at 1Ă„â€šĂ˘â‚¬â€ť; at 2Ă„â€šĂ˘â‚¬â€ť we trim
 // and re-center per line so the padding doesn't push ink off-screen.
 static uint8_t _scale = 1;
 
@@ -60,7 +60,7 @@ void buddyPrintSprite(const char* const* lines, uint8_t nLines, int yOffset, uin
   }
 }
 
-// Species pass 1× coords (relative to BUDDY_X_CENTER / BUDDY_Y_OVERLAY);
+// Species pass 1Ă„â€šĂ˘â‚¬â€ť coords (relative to BUDDY_X_CENTER / BUDDY_Y_OVERLAY);
 // transform here so all 18 species files stay scale-agnostic.
 void buddySetCursor(int x, int y) {
   _tgt->setCursor(BUDDY_X_CENTER + (x - BUDDY_X_CENTER) * _scale, y * _scale);
@@ -68,7 +68,7 @@ void buddySetCursor(int x, int y) {
 void buddySetColor(uint16_t fg)   { _tgt->setTextColor(fg, BUDDY_BG); }
 void buddyPrint(const char* s)    { _tgt->setTextSize(_scale); _tgt->print(s); }
 
-// ──────────────── species registry ────────────────
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ species registry Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬
 extern const Species CAPYBARA_SPECIES;
 extern const Species DUCK_SPECIES;
 extern const Species GOOSE_SPECIES;
@@ -98,7 +98,7 @@ static const Species* SPECIES_TABLE[] = {
 static const uint8_t N_SPECIES = sizeof(SPECIES_TABLE) / sizeof(SPECIES_TABLE[0]);
 static uint8_t currentSpeciesIdx = 0;
 
-// ──────────────── tick state ────────────────
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ tick state Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬
 static uint32_t tickCount  = 0;
 static uint32_t nextTickAt = 0;
 static const uint32_t TICK_MS = 200;
@@ -138,9 +138,9 @@ void buddyNextSpecies() {
   speciesIdxSave(currentSpeciesIdx);
 }
 
-// Only redraw when tickCount actually changes — animations run at TICK_MS
+// Only redraw when tickCount actually changes Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ animations run at TICK_MS
 // (5 fps), the loop runs at 60 fps, and the redraw is identical between
-// ticks. Gating saves ~12× the fillRect + sprite-print work. State changes
+// ticks. Gating saves ~12Ă„â€šĂ˘â‚¬â€ť the fillRect + sprite-print work. State changes
 // also need a redraw even mid-tick so transitions appear instantly.
 static uint8_t lastDrawnState = 0xFF;
 static uint8_t lastDrawnSpecies = 0xFF;
@@ -154,16 +154,16 @@ void buddySetPeek(bool peek) {
 }
 
 // One-shot render to an arbitrary TFT_eSPI surface (M5.Lcd for landscape
-// clock). Bypasses tick gating and the sprite fillRect — caller owns
+// clock). Bypasses tick gating and the sprite fillRect Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ caller owns
 // clearing. Advances the frame counter so animation runs even when
 // buddyTick is bypassed.
-// Landscape clock callsite — always 1×.
-void buddyRenderTo(TFT_eSPI* tgt, uint8_t personaState) {
+// Landscape clock callsite Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ always 1Ă„â€šĂ˘â‚¬â€ť.
+void buddyRenderTo(lgfx::LovyanGFX* tgt, uint8_t personaState) {
   uint8_t prevS = _scale; _scale = 1;
   if (personaState >= 7) personaState = B_IDLE;
   uint32_t now = millis();
   if ((int32_t)(now - nextTickAt) >= 0) { nextTickAt = now + TICK_MS; tickCount++; }
-  TFT_eSPI* prev = _tgt;
+  lgfx::LovyanGFX* prev = _tgt;
   _tgt = tgt;
   const Species* sp = SPECIES_TABLE[currentSpeciesIdx];
   if (sp->states[personaState]) sp->states[personaState](tickCount);
@@ -187,7 +187,7 @@ void buddyTick(uint8_t personaState) {
   lastDrawnState = personaState;
   lastDrawnSpecies = currentSpeciesIdx;
 
-  // Clear the whole render strip — at 2× the body reaches y≈126, at 1× ≈82.
+  // Clear the whole render strip Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ at 2Ă„â€šĂ˘â‚¬â€ť the body reaches yÄ‚ËĂ˘â‚¬Â°Ă‚Â126, at 1Ă„â€šĂ˘â‚¬â€ť Ä‚ËĂ˘â‚¬Â°Ă‚Â82.
   spr.fillRect(0, 0, BUDDY_CANVAS_W,
                (BUDDY_Y_BASE + 5 * BUDDY_CHAR_H + 12) * _scale, BUDDY_BG);
 

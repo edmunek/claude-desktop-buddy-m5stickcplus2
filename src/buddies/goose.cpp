@@ -1,13 +1,13 @@
 #include "../buddy.h"
 #include "../buddy_common.h"
-#include <M5StickCPlus.h>
+#include <M5StickCPlus2.h>
 #include <string.h>
 
-extern TFT_eSprite spr;
+extern LGFX_Sprite spr;
 
 namespace goose {
 
-// ─── SLEEP ───  ~12s cycle, 6 poses, head tucked under wing
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ SLEEP Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~12s cycle, 6 poses, head tucked under wing
 static void doSleep(uint32_t t) {
   static const char* const TUCK[5]    = { "            ", "    __      ", "   /  \\__   ", "  (  zz  )  ", "   `~~~~`   " };
   static const char* const BREATHE[5] = { "            ", "    __      ", "   /  \\__   ", "  (  --  )  ", "   `~~~~`   " };
@@ -42,7 +42,7 @@ static void doSleep(uint32_t t) {
   buddyPrint("z");
 }
 
-// ─── IDLE ───  ~14s cycle, 10 poses, swaggering goose
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ IDLE Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~14s cycle, 10 poses, swaggering goose
 static void doIdle(uint32_t t) {
   static const char* const STAND[5]   = { "            ", "    (>      ", "    ||      ", "  _(__)_    ", "   ^^^^     " };
   static const char* const LOOK_L[5]  = { "            ", "  <)        ", "   ||       ", "  _(__)_    ", "   ^^^^     " };
@@ -68,7 +68,7 @@ static void doIdle(uint32_t t) {
   buddyPrintSprite(P[SEQ[beat]], 5, 0, 0xFFFF);
 }
 
-// ─── BUSY ───  ~10s cycle, 6 poses + honk ticker
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ BUSY Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~10s cycle, 6 poses + honk ticker
 static void doBusy(uint32_t t) {
   static const char* const PATROL_A[5]  = { "            ", "    (>      ", " <==||==>   ", "  _(__)_    ", "   /^ ^\\    " };
   static const char* const PATROL_B[5]  = { "            ", "    (>      ", "  =-||-=    ", "  _(__)_    ", "   ^/ \\^    " };
@@ -90,7 +90,7 @@ static void doBusy(uint32_t t) {
   buddyPrint(HONKS[t % 8]);
 }
 
-// ─── ATTENTION ───  ~8s cycle, 6 poses + ! pulse + HONK overlay
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ ATTENTION Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~8s cycle, 6 poses + ! pulse + HONK overlay
 static void doAttention(uint32_t t) {
   static const char* const ALERT[5]   = { "    HONK!   ", "     (>>    ", "     ||     ", "   _(__)_   ", "    ^^^^    " };
   static const char* const SCAN_L[5]  = { "    HONK!   ", "  <<)       ", "    ||      ", "   _(__)_   ", "    ^^^^    " };
@@ -125,7 +125,7 @@ static void doAttention(uint32_t t) {
   }
 }
 
-// ─── CELEBRATE ───  ~5.6s cycle, 6 poses + confetti rain + HONK
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ CELEBRATE Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~5.6s cycle, 6 poses + confetti rain + HONK
 static void doCelebrate(uint32_t t) {
   static const char* const CROUCH[5]  = { "            ", "    (>      ", "   _||_     ", "  (____)    ", "   ^^^^     " };
   static const char* const JUMP[5]    = { "  HONK!     ", "    (>>     ", " <==||==>   ", "  _(__)_    ", "   /  \\     " };
@@ -152,7 +152,7 @@ static void doCelebrate(uint32_t t) {
   }
 }
 
-// ─── DIZZY ───  ~5.6s cycle, 5 poses + orbiting stars
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ DIZZY Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~5.6s cycle, 5 poses + orbiting stars
 static void doDizzy(uint32_t t) {
   static const char* const TILT_L[5]  = { "            ", "   (x       ", "   ||\\      ", "  _(__)_    ", "   v^^v     " };
   static const char* const TILT_R[5]  = { "            ", "       x)   ", "      /||   ", "    _(__)_  ", "     v^^v   " };
@@ -182,7 +182,7 @@ static void doDizzy(uint32_t t) {
   buddyPrint("+");
 }
 
-// ─── HEART ───  ~10s cycle, 5 poses + rising heart stream
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ HEART Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~10s cycle, 5 poses + rising heart stream
 static void doHeart(uint32_t t) {
   static const char* const DREAMY[5]  = { "            ", "    (^>     ", "    ||      ", "  _(__)_    ", "   ^^^^     " };
   static const char* const BLUSH[5]   = { "            ", "   #(^>#    ", "    ||      ", "  _(__)_    ", "   ^^^^     " };

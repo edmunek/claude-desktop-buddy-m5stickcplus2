@@ -1,10 +1,10 @@
 #include "character.h"
-#include <M5StickCPlus.h>
+#include <M5StickCPlus2.h>
 #include <LittleFS.h>
 #include <AnimatedGIF.h>
 #include <ArduinoJson.h>
 
-extern TFT_eSprite spr;
+extern LGFX_Sprite spr;
 
 static const char* STATE_NAMES[] = {
   "sleep", "idle", "busy", "attention", "celebrate", "dizzy", "heart"
@@ -42,9 +42,9 @@ static int         gifX = 0, gifY = 0, gifW = 0, gifH = 0;
 // in the upper 140px. No padding assumed in the source art.
 static const int   PEEK_TOP = 70;
 static bool        peekMode = false;
-// Draw target — defaults to the sprite; characterRenderTo() retargets to
+// Draw target Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ defaults to the sprite; characterRenderTo() retargets to
 // M5.Lcd for the landscape clock (both inherit TFT_eSPI).
-static TFT_eSPI*   _tgt = &spr;
+static lgfx::LovyanGFX*   _tgt = &spr;
 // Peek mode renders at half scale (2:1 nearest-neighbor in gifDrawCb) so
 // the whole pet fits the 70px window instead of cropping the top.
 static void gifPlace() {
@@ -95,9 +95,9 @@ static int32_t gifSeekCb(GIFFILE* pFile, int32_t iPosition) {
   return pFile->iPos;
 }
 
-// --- Draw callback: one scanline → line buffer → pushImage ------------
+// --- Draw callback: one scanline Ä‚ËĂ˘â‚¬Â Ă˘â‚¬â„˘ line buffer Ä‚ËĂ˘â‚¬Â Ă˘â‚¬â„˘ pushImage ------------
 // Transparent pixels get the character's bg color so each frame fully
-// paints its region — no ghosting from prior frames.
+// paints its region Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ no ghosting from prior frames.
 
 static void gifDrawCb(GIFDRAW* d) {
   uint16_t* pal16 = d->pPalette;
@@ -106,7 +106,7 @@ static void gifDrawCb(GIFDRAW* d) {
   bool      hasT  = d->ucHasTransparency;
   int       srcY  = d->iY + d->y;
   // GIFs are unoptimized full-frame (gifsicle --unoptimize --lossy) so
-  // transparent always means background — no disposal/delta handling.
+  // transparent always means background Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ no disposal/delta handling.
   // The -O2/-O3 sub-rect + delta-transparency path was tried and reverted:
   // disposal semantics are encoder-dependent and don't compose with the
   // 2:1 peek downscale's sample alignment.
@@ -139,14 +139,14 @@ static void gifDrawCb(GIFDRAW* d) {
 
 bool characterInit(const char* name) {
   if (!LittleFS.begin(false)) {
-    // begin() fails if already mounted — that's fine on reload
+    // begin() fails if already mounted Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ that's fine on reload
     if (!LittleFS.open("/")) {
       Serial.println("[char] LittleFS mount failed");
       return false;
     }
   }
 
-  // No name → scan /characters/ for the first directory present.
+  // No name Ä‚ËĂ˘â‚¬Â Ă˘â‚¬â„˘ scan /characters/ for the first directory present.
   // Makes the boot character whatever you last installed.
   static char scanned[24];
   if (!name) {
@@ -250,9 +250,9 @@ const Palette& characterPalette() { return pal; }
 // One-shot half-scale render to an arbitrary surface (M5.Lcd for the
 // landscape clock). Caller owns clearing. Advances frame timing so
 // animation runs even when characterTick() is bypassed.
-void characterRenderTo(TFT_eSPI* tgt, int cx, int cy) {
+void characterRenderTo(lgfx::LovyanGFX* tgt, int cx, int cy) {
   if (!gifOpen) return;   // caller opens via characterSetState(activeState)
-  TFT_eSPI* prevT = _tgt; bool prevP = peekMode; int px = gifX, py = gifY;
+  lgfx::LovyanGFX* prevT = _tgt; bool prevP = peekMode; int px = gifX, py = gifY;
   _tgt = tgt; peekMode = true;
   gifX = cx - gifW / 4;
   gifY = cy - gifH / 4;
@@ -340,7 +340,7 @@ void characterTick() {
     if (now < textNext) return;
     textNext = now + ts.delayMs;
 
-    // Clear a band around the text, not the whole sprite — keeps overlays
+    // Clear a band around the text, not the whole sprite Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ keeps overlays
     // like the approval panel and the HUD untouched.
     int cy = peekMode ? 35 : 60;
     spr.fillRect(0, cy - 14, spr.width(), 28, pal.bg);
@@ -374,7 +374,7 @@ void characterTick() {
   int delayMs = 0;
   if (!gif.playFrame(false, &delayMs)) {
     // End of animation. Single-gif states freeze on the last frame instead
-    // of reopening — the LittleFS open + GIF header decode is a multi-ms
+    // of reopening Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ the LittleFS open + GIF header decode is a multi-ms
     // blocking burst, and during sleep state it was looping every ~4s,
     // possibly starving the BT controller. The sprite already holds the
     // last frame; just stop ticking. Multi-gif states (idle rotation)

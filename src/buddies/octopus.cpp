@@ -1,13 +1,13 @@
 #include "../buddy.h"
 #include "../buddy_common.h"
-#include <M5StickCPlus.h>
+#include <M5StickCPlus2.h>
 #include <string.h>
 
-extern TFT_eSprite spr;
+extern LGFX_Sprite spr;
 
 namespace octopus {
 
-// ─── SLEEP ───  ~12s cycle, 6 poses
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ SLEEP Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~12s cycle, 6 poses
 static void doSleep(uint32_t t) {
   static const char* const CURL[5]    = { "            ", "            ", "   .----.   ", "  ( -- -- ) ", "  (~~zz~~)  " };
   static const char* const BREATHE[5] = { "            ", "   .----.   ", "  ( -- -- ) ", "  (______)  ", "  ~~~~~~~~  " };
@@ -42,7 +42,7 @@ static void doSleep(uint32_t t) {
   buddyPrint("z");
 }
 
-// ─── IDLE ───  ~14s cycle, 10 poses
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ IDLE Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~14s cycle, 10 poses
 static void doIdle(uint32_t t) {
   static const char* const REST[5]    = { "            ", "   .----.   ", "  ( o  o )  ", "  (______)  ", "  /\\/\\/\\/\\  " };
   static const char* const WAVE_A[5]  = { "            ", "   .----.   ", "  ( o  o )  ", "  (______)  ", "  \\/\\/\\/\\/  " };
@@ -69,7 +69,7 @@ static void doIdle(uint32_t t) {
   buddyPrintSprite(P[SEQ[beat]], 5, 0, 0xA01F);
 }
 
-// ─── BUSY ───  ~10s cycle, 6 poses + bubble ticker
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ BUSY Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~10s cycle, 6 poses + bubble ticker
 static void doBusy(uint32_t t) {
   static const char* const TYPE_A[5]  = { "            ", "   .----.   ", "  ( v  v )  ", "  (__--__)  ", "  /)\\/\\/(\\  " };
   static const char* const TYPE_B[5]  = { "            ", "   .----.   ", "  ( v  v )  ", "  (__==__)  ", "  (\\/\\/\\/)  " };
@@ -97,7 +97,7 @@ static void doBusy(uint32_t t) {
   buddyPrint("o");
 }
 
-// ─── ATTENTION ───  ~8s cycle, 6 poses + ! pulse
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ ATTENTION Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~8s cycle, 6 poses + ! pulse
 static void doAttention(uint32_t t) {
   static const char* const ALERT[5]   = { "    ^  ^    ", "   .----.   ", "  ( O  O )  ", "  (__O___)  ", "  /\\/\\/\\/\\  " };
   static const char* const SCAN_L[5]  = { "    ^  ^    ", "   .----.   ", "  (O   O )  ", "  (__O___)  ", "  /\\/\\/\\/\\  " };
@@ -127,7 +127,7 @@ static void doAttention(uint32_t t) {
   }
 }
 
-// ─── CELEBRATE ───  ~5.6s cycle, 6 poses + confetti rain
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ CELEBRATE Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~5.6s cycle, 6 poses + confetti rain
 static void doCelebrate(uint32_t t) {
   static const char* const CROUCH[5]  = { "            ", "   .----.   ", "  ( ^  ^ )  ", "  (__ww__)  ", " //\\/\\/\\\\\\ " };
   static const char* const JUMP[5]    = { "  \\/    \\/  ", "   .----.   ", "  ( ^  ^ )  ", "  (__ww__)  ", "  )(\\/\\/)( " };
@@ -154,7 +154,7 @@ static void doCelebrate(uint32_t t) {
   }
 }
 
-// ─── DIZZY ───  ~5.6s cycle, 5 poses + orbiting stars + ink cloud
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ DIZZY Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~5.6s cycle, 5 poses + orbiting stars + ink cloud
 static void doDizzy(uint32_t t) {
   static const char* const TILT_L[5]  = { "            ", "  .----.    ", " ( @  @ )   ", " (__~~__)   ", " /\\/\\/\\/\\   " };
   static const char* const TILT_R[5]  = { "            ", "    .----.  ", "   ( @  @ ) ", "   (__~~__) ", "   \\/\\/\\/\\/ " };
@@ -191,7 +191,7 @@ static void doDizzy(uint32_t t) {
   }
 }
 
-// ─── HEART ───  ~10s cycle, 6 poses + rising heart stream
+// Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬ HEART Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬Ä‚ËĂ˘â‚¬ĹĄĂ˘â€šÂ¬  ~10s cycle, 6 poses + rising heart stream
 static void doHeart(uint32_t t) {
   static const char* const DREAMY[5]  = { "            ", "   .----.   ", "  ( ^  ^ )  ", "  (__ww__)  ", "  /\\/\\/\\/\\  " };
   static const char* const BLUSH[5]   = { "            ", "   .----.   ", "  (#^  ^#)  ", "  (__ww__)  ", "  /\\/\\/\\/\\  " };

@@ -5,7 +5,7 @@
 // Each species file (src/buddies/<name>.cpp) includes this header
 // and defines its 7 state functions.
 
-// Geometry — shared layout for all species
+// Geometry Ä‚ËĂ˘â€šÂ¬Ă˘â‚¬ĹĄ shared layout for all species
 extern const int BUDDY_X_CENTER;
 extern const int BUDDY_CANVAS_W;
 extern const int BUDDY_Y_BASE;

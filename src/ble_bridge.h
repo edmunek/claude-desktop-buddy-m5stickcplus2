@@ -7,8 +7,8 @@
 // like a serial port.
 //
 // Service UUID  6e400001-b5a3-f393-e0a9-e50e24dcca9e
-// RX char       6e400002-b5a3-f393-e0a9-e50e24dcca9e   (client → stick, WRITE)
-// TX char       6e400003-b5a3-f393-e0a9-e50e24dcca9e   (stick → client, NOTIFY)
+// RX char       6e400002-b5a3-f393-e0a9-e50e24dcca9e   (client Ä‚ËĂ˘â‚¬Â Ă˘â‚¬â„˘ stick, WRITE)
+// TX char       6e400003-b5a3-f393-e0a9-e50e24dcca9e   (stick Ä‚ËĂ˘â‚¬Â Ă˘â‚¬â„˘ client, NOTIFY)
 //
 // Writes from the client are line-buffered and dispatched through the
 // same _applyJson path that USB/BT-Classic use. Replies (acks, status
